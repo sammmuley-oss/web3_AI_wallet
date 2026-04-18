@@ -2,18 +2,7 @@
 
 import { useMemo } from 'react';
 
-interface RiskMeterProps {
-  score: number;
-  level: 'low' | 'medium' | 'high';
-  threats: Array<{
-    id: string;
-    severity: string;
-    title: string;
-    description: string;
-  }>;
-}
-
-export default function RiskMeter({ score, level, threats }: RiskMeterProps) {
+export default function RiskMeter({ score, level, threats }) {
   const radius = 85;
   const strokeWidth = 16;
   const circumference = Math.PI * radius;
@@ -25,12 +14,16 @@ export default function RiskMeter({ score, level, threats }: RiskMeterProps) {
       case 'low': return { stroke: '#10b981', glow: 'rgba(16,185,129,0.3)', bg: 'rgba(16,185,129,0.06)', text: '#34d399', label: 'LOW RISK', emoji: '✅' };
       case 'medium': return { stroke: '#f59e0b', glow: 'rgba(245,158,11,0.3)', bg: 'rgba(245,158,11,0.06)', text: '#fbbf24', label: 'MEDIUM RISK', emoji: '⚡' };
       case 'high': return { stroke: '#ef4444', glow: 'rgba(239,68,68,0.3)', bg: 'rgba(239,68,68,0.06)', text: '#f87171', label: 'HIGH RISK', emoji: '🚨' };
+      default: return { stroke: '#10b981', glow: 'rgba(16,185,129,0.3)', bg: 'rgba(16,185,129,0.06)', text: '#34d399', label: 'LOW RISK', emoji: '✅' };
     }
   }, [level]);
 
   return (
     <div className="glass-card p-6">
-      <h3 className="text-base font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
+      <h3
+        className="text-base font-bold mb-2"
+        style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}
+      >
         🛡️ Risk Assessment
       </h3>
 
@@ -60,10 +53,16 @@ export default function RiskMeter({ score, level, threats }: RiskMeterProps) {
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-end pb-1">
-            <span className="text-4xl font-black tabular-nums" style={{ color: colors.stroke }}>
+            <span
+              className="text-4xl font-black tabular-nums"
+              style={{ fontFamily: 'var(--font-display)', color: colors.stroke }}
+            >
               {score}
             </span>
-            <span className="text-xs font-extrabold tracking-widest mt-1" style={{ color: colors.text }}>
+            <span
+              className="text-xs font-extrabold tracking-widest mt-1"
+              style={{ color: colors.text }}
+            >
               {colors.emoji} {colors.label}
             </span>
           </div>
@@ -74,13 +73,19 @@ export default function RiskMeter({ score, level, threats }: RiskMeterProps) {
       <div className="flex gap-1.5 mb-5">
         {['Low', 'Medium', 'High'].map((l) => (
           <div key={l} className="flex-1 text-center">
-            <div className="h-2 rounded-full mb-1.5 transition-all duration-500" style={{
-              background: l.toLowerCase() === level ? colors.stroke : 'var(--bg-secondary)',
-              boxShadow: l.toLowerCase() === level ? `0 0 10px ${colors.glow}` : 'none',
-            }} />
-            <span className="text-xs font-semibold" style={{
-              color: l.toLowerCase() === level ? colors.text : 'var(--text-muted)',
-            }}>
+            <div
+              className="h-2 rounded-full mb-1.5 transition-all duration-500"
+              style={{
+                background: l.toLowerCase() === level ? colors.stroke : 'var(--bg-secondary)',
+                boxShadow: l.toLowerCase() === level ? `0 0 10px ${colors.glow}` : 'none',
+              }}
+            />
+            <span
+              className="text-xs font-semibold"
+              style={{
+                color: l.toLowerCase() === level ? colors.text : 'var(--text-muted)',
+              }}
+            >
               {l}
             </span>
           </div>
@@ -90,7 +95,10 @@ export default function RiskMeter({ score, level, threats }: RiskMeterProps) {
       {/* Threats */}
       {threats.length > 0 ? (
         <div className="space-y-2.5">
-          <p className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
+          <p
+            className="text-xs font-bold uppercase tracking-wider"
+            style={{ color: 'var(--text-muted)' }}
+          >
             Detected Threats ({threats.length})
           </p>
           {threats.map((threat, i) => (
@@ -107,26 +115,41 @@ export default function RiskMeter({ score, level, threats }: RiskMeterProps) {
               }}
             >
               <div className="flex items-center gap-2.5 mb-1.5">
-                <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{
-                  background: threat.severity === 'high' ? '#ef4444' :
-                              threat.severity === 'medium' ? '#f59e0b' : '#64748b',
-                  boxShadow: `0 0 6px ${threat.severity === 'high' ? 'rgba(239,68,68,0.4)' : 'transparent'}`,
-                }} />
-                <span className="text-sm font-bold" style={{
-                  color: threat.severity === 'high' ? '#f87171' :
-                         threat.severity === 'medium' ? '#fbbf24' : 'var(--text-secondary)',
-                }}>
+                <div
+                  className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                  style={{
+                    background: threat.severity === 'high' ? '#ef4444' :
+                                threat.severity === 'medium' ? '#f59e0b' : '#64748b',
+                    boxShadow: `0 0 6px ${threat.severity === 'high' ? 'rgba(239,68,68,0.4)' : 'transparent'}`,
+                  }}
+                />
+                <span
+                  className="text-sm font-bold"
+                  style={{
+                    color: threat.severity === 'high' ? '#f87171' :
+                           threat.severity === 'medium' ? '#fbbf24' : 'var(--text-secondary)',
+                  }}
+                >
                   {threat.title}
                 </span>
               </div>
-              <p className="text-sm leading-relaxed pl-5" style={{ color: 'var(--text-secondary)' }}>
+              <p
+                className="text-sm leading-relaxed pl-5"
+                style={{ color: 'var(--text-secondary)' }}
+              >
                 {threat.description}
               </p>
             </div>
           ))}
         </div>
       ) : (
-        <div className="text-center p-5 rounded-xl" style={{ background: 'rgba(16,185,129,0.04)', border: '1px solid rgba(16,185,129,0.1)' }}>
+        <div
+          className="text-center p-5 rounded-xl"
+          style={{
+            background: 'rgba(16,185,129,0.04)',
+            border: '1px solid rgba(16,185,129,0.1)',
+          }}
+        >
           <p className="text-base font-bold" style={{ color: 'var(--accent-green)' }}>
             ✅ No threats detected
           </p>

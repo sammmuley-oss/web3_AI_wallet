@@ -15,9 +15,3 @@ export const config = createConfig({
     [arbitrum.id]: http(),
   },
 })
-
-declare module 'wagmi' {
-  interface Register {
-    config: typeof config
-  }
-}

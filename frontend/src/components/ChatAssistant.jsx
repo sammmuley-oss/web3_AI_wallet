@@ -2,15 +2,11 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Sparkles, Trash2 } from 'lucide-react';
-import { chatWithAssistant, type ChatMessage } from '@/lib/api';
+import { chatWithAssistant } from '@/lib/api';
 import ReactMarkdown from 'react-markdown';
 
-interface ChatAssistantProps {
-  transactionContext?: Record<string, unknown> | null;
-}
-
-export default function ChatAssistant({ transactionContext }: ChatAssistantProps) {
-  const [messages, setMessages] = useState<Array<ChatMessage & { id: string }>>([
+export default function ChatAssistant({ transactionContext }) {
+  const [messages, setMessages] = useState([
     {
       id: 'welcome',
       role: 'assistant',
@@ -19,10 +15,10 @@ export default function ChatAssistant({ transactionContext }: ChatAssistantProps
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const chatEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const chatEndRef = useRef(null);
+  const inputRef = useRef(null);
 
-  // Auto-scroll to bottom
+  // Auto-scroll to bottom on new messages
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -31,7 +27,7 @@ export default function ChatAssistant({ transactionContext }: ChatAssistantProps
     const trimmed = input.trim();
     if (!trimmed || isLoading) return;
 
-    const userMsg: ChatMessage & { id: string } = {
+    const userMsg = {
       id: `user-${Date.now()}`,
       role: 'user',
       content: trimmed,
@@ -43,13 +39,13 @@ export default function ChatAssistant({ transactionContext }: ChatAssistantProps
 
     try {
       // Build history (exclude welcome message)
-      const history: ChatMessage[] = messages
+      const history = messages
         .filter((m) => m.id !== 'welcome')
         .map(({ role, content }) => ({ role, content }));
 
       const response = await chatWithAssistant(trimmed, history, transactionContext || null);
 
-      const aiMsg: ChatMessage & { id: string } = {
+      const aiMsg = {
         id: `ai-${Date.now()}`,
         role: 'assistant',
         content: response.response,
@@ -57,7 +53,7 @@ export default function ChatAssistant({ transactionContext }: ChatAssistantProps
 
       setMessages((prev) => [...prev, aiMsg]);
     } catch (error) {
-      const errMsg: ChatMessage & { id: string } = {
+      const errMsg = {
         id: `err-${Date.now()}`,
         role: 'assistant',
         content: "Sorry, I couldn't process that right now. Please make sure the backend server is running on port 3001.",
@@ -69,7 +65,7 @@ export default function ChatAssistant({ transactionContext }: ChatAssistantProps
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
@@ -94,41 +90,77 @@ export default function ChatAssistant({ transactionContext }: ChatAssistantProps
   ];
 
   return (
-    <div className="glass-card flex flex-col" style={{ height: '520px' }}>
-      {/* Header */}
-      <div className="flex items-center justify-between px-5 py-3" style={{
-        borderBottom: '1px solid var(--border-subtle)',
-      }}>
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center"
-            style={{ background: 'var(--gradient-cyber)' }}>
-            <Bot className="w-4 h-4 text-white" />
+    <div
+      id="chat-widget"
+      className="glass-card flex flex-col"
+      style={{ height: '520px', minWidth: '320px' }}
+    >
+      {/* ── Header ── */}
+      <div
+        className="flex items-center justify-between px-5 py-3.5"
+        style={{ borderBottom: '1px solid var(--border-card)' }}
+      >
+        <div className="flex items-center gap-3">
+          {/* ShieldAI avatar */}
+          <div
+            className="w-9 h-9 rounded-full flex items-center justify-center"
+            style={{ background: 'var(--gradient-cyber)' }}
+          >
+            <Bot className="w-4.5 h-4.5 text-white" />
           </div>
           <div>
-            <p className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>ShieldAI</p>
+            <p
+              className="text-sm font-bold"
+              style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}
+            >
+              ShieldAI
+            </p>
             <div className="flex items-center gap-1.5">
-              <div className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--accent-green)' }} />
-              <span className="text-[10px]" style={{ color: 'var(--text-muted)' }}>Online</span>
+              {/* Online dot with pulse */}
+              <div
+                className="w-1.5 h-1.5 rounded-full animate-status-pulse"
+                style={{ background: 'var(--accent-green)' }}
+              />
+              <span className="text-[10px] font-medium" style={{ color: 'var(--text-muted)' }}>
+                Online
+              </span>
             </div>
           </div>
         </div>
-        <button onClick={clearChat} className="p-2 rounded-lg transition-colors hover:bg-white/5"
-          title="Clear chat">
+        <button
+          onClick={clearChat}
+          className="p-2 rounded-lg transition-colors hover:bg-white/5"
+          title="Clear chat"
+        >
           <Trash2 className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />
         </button>
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4" style={{ scrollBehavior: 'smooth' }}>
+      {/* ── Messages Area ── */}
+      <div
+        className="flex-1 overflow-y-auto px-5 py-4 space-y-4"
+        style={{ scrollBehavior: 'smooth' }}
+      >
         {messages.map((msg) => (
-          <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className="flex gap-2.5 max-w-[90%]">
+          <div
+            key={msg.id}
+            className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+          >
+            <div className="flex gap-2.5 max-w-[88%]">
+              {/* AI avatar */}
               {msg.role === 'assistant' && (
-                <div className="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center mt-0.5"
-                  style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border-subtle)' }}>
+                <div
+                  className="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center mt-0.5"
+                  style={{
+                    background: 'var(--bg-card-hover)',
+                    border: '1px solid var(--border-card)',
+                  }}
+                >
                   <Sparkles className="w-3.5 h-3.5" style={{ color: 'var(--accent-cyan)' }} />
                 </div>
               )}
+
+              {/* Message bubble */}
               <div className={msg.role === 'user' ? 'chat-bubble-user' : 'chat-bubble-ai ai-content'}>
                 {msg.role === 'assistant' ? (
                   <ReactMarkdown>{msg.content}</ReactMarkdown>
@@ -136,9 +168,13 @@ export default function ChatAssistant({ transactionContext }: ChatAssistantProps
                   msg.content
                 )}
               </div>
+
+              {/* User avatar */}
               {msg.role === 'user' && (
-                <div className="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center mt-0.5"
-                  style={{ background: 'var(--gradient-primary)' }}>
+                <div
+                  className="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center mt-0.5"
+                  style={{ background: 'var(--gradient-primary)' }}
+                >
                   <User className="w-3.5 h-3.5 text-white" />
                 </div>
               )}
@@ -146,10 +182,16 @@ export default function ChatAssistant({ transactionContext }: ChatAssistantProps
           </div>
         ))}
 
+        {/* Typing indicator */}
         {isLoading && (
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center"
-              style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border-subtle)' }}>
+            <div
+              className="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center"
+              style={{
+                background: 'var(--bg-card-hover)',
+                border: '1px solid var(--border-card)',
+              }}
+            >
               <Sparkles className="w-3.5 h-3.5" style={{ color: 'var(--accent-cyan)' }} />
             </div>
             <div className="chat-bubble-ai flex items-center gap-2">
@@ -166,17 +208,17 @@ export default function ChatAssistant({ transactionContext }: ChatAssistantProps
         <div ref={chatEndRef} />
       </div>
 
-      {/* Quick questions */}
+      {/* ── Quick Questions (shown early in conversation) ── */}
       {messages.length <= 2 && (
-        <div className="px-4 pb-2 flex flex-wrap gap-1.5">
+        <div className="px-5 pb-2 flex flex-wrap gap-1.5">
           {quickQuestions.map((q) => (
             <button
               key={q}
               onClick={() => { setInput(q); }}
-              className="text-[11px] px-3 py-1.5 rounded-full transition-all"
+              className="text-[11px] px-3 py-1.5 rounded-full transition-all duration-200"
               style={{
                 background: 'var(--bg-secondary)',
-                border: '1px solid var(--border-subtle)',
+                border: '1px solid var(--border-card)',
                 color: 'var(--text-secondary)',
               }}
               onMouseEnter={(e) => {
@@ -184,7 +226,7 @@ export default function ChatAssistant({ transactionContext }: ChatAssistantProps
                 e.currentTarget.style.color = 'var(--accent-cyan)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'var(--border-subtle)';
+                e.currentTarget.style.borderColor = 'var(--border-card)';
                 e.currentTarget.style.color = 'var(--text-secondary)';
               }}
             >
@@ -194,8 +236,8 @@ export default function ChatAssistant({ transactionContext }: ChatAssistantProps
         </div>
       )}
 
-      {/* Input */}
-      <div className="px-4 pb-4 pt-2">
+      {/* ── Input Area ── */}
+      <div className="px-5 pb-4 pt-2">
         <div className="flex gap-2">
           <input
             ref={inputRef}
@@ -211,7 +253,7 @@ export default function ChatAssistant({ transactionContext }: ChatAssistantProps
           <button
             onClick={handleSend}
             disabled={!input.trim() || isLoading}
-            className="btn-primary px-4"
+            className="btn-primary px-4 flex items-center justify-center"
             style={{ opacity: !input.trim() || isLoading ? 0.4 : 1 }}
           >
             <Send className="w-4 h-4" />

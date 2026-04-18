@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { Search } from 'lucide-react';
-import type { AnalysisResponse } from '@/lib/api';
 
 // Sample transactions for one-click testing
 const SAMPLE_TXS = [
@@ -68,14 +67,8 @@ const SAMPLE_TXS = [
   },
 ];
 
-interface TransactionPreviewProps {
-  onAnalyze: (txData: { to: string; from: string; data: string; value: string }) => void;
-  isLoading: boolean;
-  result: AnalysisResponse | null;
-}
-
-export default function TransactionPreview({ onAnalyze, isLoading }: TransactionPreviewProps) {
-  const [mode, setMode] = useState<'samples' | 'paste'>('samples');
+export default function TransactionPreview({ onAnalyze, isLoading }) {
+  const [mode, setMode] = useState('samples');
   const [txTo, setTxTo] = useState('');
   const [txData, setTxData] = useState('');
   const [txValue, setTxValue] = useState('0x0');
@@ -85,7 +78,7 @@ export default function TransactionPreview({ onAnalyze, isLoading }: Transaction
     onAnalyze({ to: txTo, from: '', data: txData, value: txValue });
   };
 
-  const handleSample = (sample: typeof SAMPLE_TXS[0]) => {
+  const handleSample = (sample) => {
     setTxTo(sample.data.to);
     setTxData(sample.data.data);
     setTxValue(sample.data.value);
@@ -95,12 +88,15 @@ export default function TransactionPreview({ onAnalyze, isLoading }: Transaction
   return (
     <div className="space-y-5">
       {/* Mode toggle */}
-      <div className="flex rounded-xl overflow-hidden" style={{ border: '1px solid var(--border-subtle)' }}>
+      <div
+        className="flex rounded-xl overflow-hidden"
+        style={{ border: '1px solid var(--border-card)' }}
+      >
         <button
           onClick={() => setMode('samples')}
-          className="flex-1 py-3 text-sm font-bold transition-all"
+          className="flex-1 py-3 text-sm font-bold transition-all duration-200"
           style={{
-            background: mode === 'samples' ? 'var(--accent-blue)' : 'var(--bg-secondary)',
+            background: mode === 'samples' ? 'var(--accent-purple)' : 'var(--bg-secondary)',
             color: mode === 'samples' ? 'white' : 'var(--text-muted)',
           }}
         >
@@ -108,9 +104,9 @@ export default function TransactionPreview({ onAnalyze, isLoading }: Transaction
         </button>
         <button
           onClick={() => setMode('paste')}
-          className="flex-1 py-3 text-sm font-bold transition-all"
+          className="flex-1 py-3 text-sm font-bold transition-all duration-200"
           style={{
-            background: mode === 'paste' ? 'var(--accent-blue)' : 'var(--bg-secondary)',
+            background: mode === 'paste' ? 'var(--accent-purple)' : 'var(--bg-secondary)',
             color: mode === 'paste' ? 'white' : 'var(--text-muted)',
           }}
         >
@@ -118,7 +114,7 @@ export default function TransactionPreview({ onAnalyze, isLoading }: Transaction
         </button>
       </div>
 
-      {/* Samples mode */}
+      {/* ── Samples Mode ── */}
       {mode === 'samples' && (
         <div className="space-y-2.5">
           {SAMPLE_TXS.map((sample, i) => (
@@ -129,7 +125,7 @@ export default function TransactionPreview({ onAnalyze, isLoading }: Transaction
               className="w-full flex items-center gap-4 p-4 rounded-xl text-left transition-all duration-200"
               style={{
                 background: 'var(--bg-secondary)',
-                border: '1px solid var(--border-subtle)',
+                border: '1px solid var(--border-card)',
                 opacity: isLoading ? 0.5 : 1,
                 cursor: isLoading ? 'wait' : 'pointer',
               }}
@@ -141,21 +137,28 @@ export default function TransactionPreview({ onAnalyze, isLoading }: Transaction
                 }
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'var(--border-subtle)';
+                e.currentTarget.style.borderColor = 'var(--border-card)';
                 e.currentTarget.style.background = 'var(--bg-secondary)';
                 e.currentTarget.style.transform = 'translateX(0)';
               }}
             >
               <span className="text-2xl">{sample.icon}</span>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>{sample.name}</p>
-                <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>{sample.desc}</p>
+                <p className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>
+                  {sample.name}
+                </p>
+                <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
+                  {sample.desc}
+                </p>
               </div>
-              <span className="text-xs font-bold px-3 py-1 rounded-full flex-shrink-0" style={{
-                background: `${sample.riskColor}18`,
-                color: sample.riskColor,
-                border: `1px solid ${sample.riskColor}30`,
-              }}>
+              <span
+                className="text-xs font-bold px-3 py-1 rounded-full flex-shrink-0"
+                style={{
+                  background: `${sample.riskColor}18`,
+                  color: sample.riskColor,
+                  border: `1px solid ${sample.riskColor}30`,
+                }}
+              >
                 {sample.risk}
               </span>
             </button>
@@ -163,11 +166,14 @@ export default function TransactionPreview({ onAnalyze, isLoading }: Transaction
         </div>
       )}
 
-      {/* Paste mode */}
+      {/* ── Paste Mode ── */}
       {mode === 'paste' && (
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider mb-2" style={{ color: 'var(--text-muted)' }}>
+            <label
+              className="block text-xs font-bold uppercase tracking-wider mb-2"
+              style={{ color: 'var(--text-muted)' }}
+            >
               To Address (Contract)
             </label>
             <input
@@ -179,7 +185,10 @@ export default function TransactionPreview({ onAnalyze, isLoading }: Transaction
             />
           </div>
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider mb-2" style={{ color: 'var(--text-muted)' }}>
+            <label
+              className="block text-xs font-bold uppercase tracking-wider mb-2"
+              style={{ color: 'var(--text-muted)' }}
+            >
               Transaction Data (Calldata)
             </label>
             <textarea
@@ -191,7 +200,10 @@ export default function TransactionPreview({ onAnalyze, isLoading }: Transaction
             />
           </div>
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider mb-2" style={{ color: 'var(--text-muted)' }}>
+            <label
+              className="block text-xs font-bold uppercase tracking-wider mb-2"
+              style={{ color: 'var(--text-muted)' }}
+            >
               Value (hex wei) — <span style={{ color: 'var(--text-secondary)' }}>e.g. 0x0 for no ETH</span>
             </label>
             <input

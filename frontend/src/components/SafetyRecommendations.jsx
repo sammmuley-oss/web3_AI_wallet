@@ -1,29 +1,24 @@
 'use client';
 
-interface Recommendation {
-  icon: string;
-  action: string;
-  detail: string;
-}
-
-interface SafetyRecommendationsProps {
-  recommendations: Recommendation[];
-  aiExplanation: string;
-}
-
-export default function SafetyRecommendations({ recommendations, aiExplanation }: SafetyRecommendationsProps) {
+export default function SafetyRecommendations({ recommendations, aiExplanation }) {
   return (
     <div className="glass-card p-6 space-y-6">
       {/* AI Explanation */}
       <div>
-        <h3 className="text-base font-bold mb-4 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+        <h3
+          className="text-base font-bold mb-4 flex items-center gap-2"
+          style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}
+        >
           🤖 AI Analysis
         </h3>
-        <div className="p-5 rounded-xl text-sm leading-[1.8]" style={{
-          background: 'var(--bg-secondary)',
-          border: '1px solid var(--border-subtle)',
-          color: 'var(--text-secondary)',
-        }}>
+        <div
+          className="p-5 rounded-xl text-sm leading-[1.8]"
+          style={{
+            background: 'var(--bg-secondary)',
+            border: '1px solid var(--border-card)',
+            color: 'var(--text-secondary)',
+          }}
+        >
           {aiExplanation.split('\n').map((line, i) => {
             if (line.trim() === '') return <div key={i} className="h-3" />;
             const parts = line.split(/(\*\*.*?\*\*)/g);
@@ -47,7 +42,10 @@ export default function SafetyRecommendations({ recommendations, aiExplanation }
 
       {/* Recommendations */}
       <div>
-        <h3 className="text-base font-bold mb-4 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+        <h3
+          className="text-base font-bold mb-4 flex items-center gap-2"
+          style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}
+        >
           🛡️ Safety Recommendations
         </h3>
         <div className="space-y-3">
@@ -57,14 +55,14 @@ export default function SafetyRecommendations({ recommendations, aiExplanation }
               className="flex items-start gap-4 p-4 rounded-xl transition-all duration-200"
               style={{
                 background: 'var(--bg-secondary)',
-                border: '1px solid var(--border-subtle)',
+                border: '1px solid var(--border-card)',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = 'var(--border-accent)';
                 e.currentTarget.style.transform = 'translateX(4px)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'var(--border-subtle)';
+                e.currentTarget.style.borderColor = 'var(--border-card)';
                 e.currentTarget.style.transform = 'translateX(0)';
               }}
             >
