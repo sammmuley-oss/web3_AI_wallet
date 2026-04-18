@@ -1,39 +1,45 @@
 /**
- * AI Service - OpenAI Integration
+ * AI Service - Groq Integration
  * Handles all LLM calls for transaction explanation, risk analysis, and chat
  */
 
-const OpenAI = require('openai');
+const Groq = require('groq-sdk');
 const { buildExplainerPrompt } = require('../prompts/explainer');
 const { buildRiskAnalysisPrompt } = require('../prompts/riskAnalysis');
 const { buildChatContext, buildConversationMessages } = require('../prompts/assistant');
 
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+// Initialize Groq client
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || '' });
+const MODEL = process.env.AI_MODEL || 'llama-3.3-70b-versatile';
 
-const MODEL = process.env.AI_MODEL || 'gpt-4o-mini';
+/**
+ * Helper – call Groq chat completions
+ */
+async function callGroq(messages, { temperature = 0.3, max_tokens = 500 } = {}) {
+  const completion = await groq.chat.completions.create({
+    model: MODEL,
+    messages,
+    temperature,
+    max_tokens,
+  });
+  return completion.choices[0]?.message?.content ?? '';
+}
 
 /**
  * Generate a human-readable explanation of a transaction
  */
 async function explainTransaction(decoded, riskAssessment) {
-  // If no API key, return a structured fallback response
-  if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'sk-your-openai-api-key-here') {
+  if (!process.env.GROQ_API_KEY) {
     return generateFallbackExplanation(decoded, riskAssessment);
   }
 
   try {
     const prompt = buildExplainerPrompt(decoded, riskAssessment);
-    const response = await openai.chat.completions.create({
-      model: MODEL,
-      messages: [{ role: 'user', content: prompt }],
-      max_tokens: 500,
-      temperature: 0.3 // Lower temperature for more factual responses
-    });
-
-    return response.choices[0]?.message?.content || generateFallbackExplanation(decoded, riskAssessment);
+    const reply = await callGroq(
+      [{ role: 'user', content: prompt }],
+      { temperature: 0.3, max_tokens: 500 }
+    );
+    return reply || generateFallbackExplanation(decoded, riskAssessment);
   } catch (error) {
     console.error('AI explainer error:', error.message);
     return generateFallbackExplanation(decoded, riskAssessment);
@@ -44,20 +50,17 @@ async function explainTransaction(decoded, riskAssessment) {
  * Generate AI-powered risk analysis
  */
 async function analyzeRiskWithAI(decoded, riskAssessment) {
-  if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'sk-your-openai-api-key-here') {
+  if (!process.env.GROQ_API_KEY) {
     return generateFallbackRiskAnalysis(decoded, riskAssessment);
   }
 
   try {
     const prompt = buildRiskAnalysisPrompt(decoded, riskAssessment);
-    const response = await openai.chat.completions.create({
-      model: MODEL,
-      messages: [{ role: 'user', content: prompt }],
-      max_tokens: 600,
-      temperature: 0.2
-    });
-
-    return response.choices[0]?.message?.content || generateFallbackRiskAnalysis(decoded, riskAssessment);
+    const reply = await callGroq(
+      [{ role: 'user', content: prompt }],
+      { temperature: 0.2, max_tokens: 600 }
+    );
+    return reply || generateFallbackRiskAnalysis(decoded, riskAssessment);
   } catch (error) {
     console.error('AI risk analysis error:', error.message);
     return generateFallbackRiskAnalysis(decoded, riskAssessment);
@@ -68,7 +71,7 @@ async function analyzeRiskWithAI(decoded, riskAssessment) {
  * Chat with the AI assistant
  */
 async function chat(userMessage, history = [], transactionContext = null) {
-  if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'sk-your-openai-api-key-here') {
+  if (!process.env.GROQ_API_KEY) {
     return generateFallbackChatResponse(userMessage, transactionContext);
   }
 
@@ -80,14 +83,8 @@ async function chat(userMessage, history = [], transactionContext = null) {
       messages = buildChatContext(userMessage, transactionContext);
     }
 
-    const response = await openai.chat.completions.create({
-      model: MODEL,
-      messages,
-      max_tokens: 500,
-      temperature: 0.5
-    });
-
-    return response.choices[0]?.message?.content || "I'm sorry, I couldn't process that request. Could you try rephrasing?";
+    const reply = await callGroq(messages, { temperature: 0.5, max_tokens: 500 });
+    return reply || "I'm sorry, I couldn't process that request. Could you try rephrasing?";
   } catch (error) {
     console.error('AI chat error:', error.message);
     return generateFallbackChatResponse(userMessage, transactionContext);
