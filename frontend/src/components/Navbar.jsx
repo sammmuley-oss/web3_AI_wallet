@@ -26,37 +26,39 @@ export default function Navbar({ activeTab, onTabChange }) {
     >
       {/* Inner container — matches page content width */}
       <div className="max-w-4xl mx-auto px-6">
-        <div className="flex items-center justify-between h-[72px]">
+        <div className="flex items-center h-[72px]">
 
-          {/* ── Logo (far left) ── */}
-          <button
-            id="nav-logo"
-            onClick={() => onTabChange('dashboard')}
-            className="flex items-center gap-3 flex-shrink-0"
-          >
-            <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center"
-              style={{ background: 'var(--gradient-primary)' }}
+          {/* ── Logo (far left, takes equal flex space) ── */}
+          <div className="flex-1 flex items-center">
+            <button
+              id="nav-logo"
+              onClick={() => onTabChange('dashboard')}
+              className="flex items-center gap-3"
             >
-              <Shield className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h1
-                className="text-lg font-extrabold tracking-tight leading-tight"
-                style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center"
+                style={{ background: 'var(--gradient-primary)' }}
               >
-                ShieldAI
-              </h1>
-              <p
-                className="text-[10px] font-bold tracking-[0.2em] uppercase leading-none"
-                style={{ color: 'var(--accent-cyan)' }}
-              >
-                Wallet Guardian
-              </p>
-            </div>
-          </button>
+                <Shield className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h1
+                  className="text-lg font-extrabold tracking-tight leading-tight"
+                  style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}
+                >
+                  ShieldAI
+                </h1>
+                <p
+                  className="text-[10px] font-bold tracking-[0.2em] uppercase leading-none"
+                  style={{ color: 'var(--accent-cyan)' }}
+                >
+                  Wallet Guardian
+                </p>
+              </div>
+            </button>
+          </div>
 
-          {/* ── Desktop Tabs (centered) ── */}
+          {/* ── Desktop Tabs (truly centered) ── */}
           <div
             className="hidden md:flex items-center gap-1 px-1.5 py-1.5 rounded-xl"
             style={{
@@ -81,34 +83,35 @@ export default function Navbar({ activeTab, onTabChange }) {
             ))}
           </div>
 
-          {/* ── Protected Status Badge (far right) ── */}
-          <div
-            className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl flex-shrink-0"
-            style={{
-              background: 'rgba(16,185,129,0.08)',
-              border: '1px solid rgba(16,185,129,0.15)',
-            }}
-          >
+          {/* ── Right side (takes equal flex space, aligned to the right) ── */}
+          <div className="flex-1 flex items-center justify-end gap-3">
+            {/* Protected Status Badge — desktop only */}
             <div
-              className="w-2 h-2 rounded-full animate-status-pulse"
+              className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl"
               style={{
-                background: 'var(--accent-green)',
+                background: 'rgba(16,185,129,0.08)',
+                border: '1px solid rgba(16,185,129,0.15)',
               }}
-            />
-            <span className="text-xs font-bold" style={{ color: 'var(--accent-green)' }}>
-              Protected
-            </span>
-          </div>
+            >
+              <div
+                className="w-2 h-2 rounded-full animate-status-pulse"
+                style={{ background: 'var(--accent-green)' }}
+              />
+              <span className="text-xs font-bold" style={{ color: 'var(--accent-green)' }}>
+                Protected
+              </span>
+            </div>
 
-          {/* ── Mobile Hamburger Toggle ── */}
-          <button
-            id="nav-mobile-toggle"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 rounded-xl transition-colors"
-            style={{ color: 'var(--text-secondary)', background: 'var(--bg-card)' }}
-          >
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
+            {/* Mobile Hamburger Toggle */}
+            <button
+              id="nav-mobile-toggle"
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="md:hidden p-2 rounded-xl transition-colors"
+              style={{ color: 'var(--text-secondary)', background: 'var(--bg-card)' }}
+            >
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
       </div>
 

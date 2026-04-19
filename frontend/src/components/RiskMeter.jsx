@@ -28,9 +28,14 @@ export default function RiskMeter({ score, level, threats }) {
       </h3>
 
       {/* Gauge */}
-      <div className="flex justify-center py-4">
-        <div className="relative" style={{ width: 220, height: 125 }}>
-          <svg width="220" height="125" viewBox="0 0 220 125">
+      <div className="flex justify-center py-4 overflow-hidden">
+        <div className="relative w-full max-w-[220px]" style={{ height: 125 }}>
+          <svg
+            width="100%"
+            height="125"
+            viewBox="0 0 220 125"
+            preserveAspectRatio="xMidYMid meet"
+          >
             <path
               d="M 18 110 A 85 85 0 0 1 202 110"
               fill="none"

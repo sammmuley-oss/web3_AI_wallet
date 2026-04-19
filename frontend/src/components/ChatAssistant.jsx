@@ -93,7 +93,7 @@ export default function ChatAssistant({ transactionContext }) {
     <div
       id="chat-widget"
       className="glass-card flex flex-col"
-      style={{ height: '520px', minWidth: '320px' }}
+      style={{ height: '520px' }}
     >
       {/* ── Header ── */}
       <div
@@ -106,7 +106,7 @@ export default function ChatAssistant({ transactionContext }) {
             className="w-9 h-9 rounded-full flex items-center justify-center"
             style={{ background: 'var(--gradient-cyber)' }}
           >
-            <Bot className="w-4.5 h-4.5 text-white" />
+            <Bot className="w-5 h-5 text-white" />
           </div>
           <div>
             <p

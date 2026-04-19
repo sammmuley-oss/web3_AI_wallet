@@ -148,7 +148,7 @@ export default function Home() {
             </p>
 
             {/* CTA buttons */}
-            <div className="flex items-center justify-center gap-3 mt-8">
+            <div className="flex flex-wrap items-center justify-center gap-3 mt-8">
               <button
                 onClick={() => setActiveTab('analyze')}
                 className="btn-primary flex items-center gap-2 px-6 py-3 text-sm"
@@ -424,7 +424,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-6 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
             {/* Sidebar */}
-            <div className="lg:col-span-1 space-y-5">
+            <div className="order-2 lg:order-1 lg:col-span-1 space-y-5">
               <WalletConnect />
               {analysisResult && (
                 <RiskMeter
@@ -465,7 +465,7 @@ export default function Home() {
             </div>
 
             {/* Chat */}
-            <div className="lg:col-span-2">
+            <div className="order-1 lg:order-2 lg:col-span-2">
               <ChatAssistant transactionContext={transactionContext} />
             </div>
           </div>
