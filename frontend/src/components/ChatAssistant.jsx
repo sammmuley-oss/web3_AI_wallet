@@ -52,7 +52,7 @@ export default function ChatAssistant({ transactionContext }) {
       };
 
       setMessages((prev) => [...prev, aiMsg]);
-    } catch (error) {
+    } catch {
       const errMsg = {
         id: `err-${Date.now()}`,
         role: 'assistant',

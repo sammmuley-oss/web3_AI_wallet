@@ -1,5 +1,24 @@
+import localFont from 'next/font/local';
 import "./globals.css";
 import Web3Provider from "@/providers/Web3Provider";
+
+const spaceGrotesk = localFont({
+  src: '../../public/fonts/space-grotesk.woff2',
+  variable: '--font-space-grotesk',
+  display: 'swap',
+});
+
+const inter = localFont({
+  src: '../../public/fonts/inter.woff2',
+  variable: '--font-inter',
+  display: 'swap',
+});
+
+const jetbrainsMono = localFont({
+  src: '../../public/fonts/jetbrains-mono.woff2',
+  variable: '--font-jetbrains',
+  display: 'swap',
+});
 
 export const metadata = {
   title: "ShieldAI — Wallet Guardian | AI-Powered Transaction Security",
@@ -9,17 +28,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <head>
-        {/* Preconnect to Google Fonts for faster loading */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* Display font: Space Grotesk | Body font: Inter | Mono: JetBrains Mono */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+    <html lang="en" className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
       <body className="antialiased">
         <Web3Provider>
           {children}

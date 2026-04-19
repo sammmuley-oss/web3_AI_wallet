@@ -49,10 +49,10 @@
   --shadow-glow-green: 0 0 20px rgba(16, 185, 129, 0.08);
   --shadow-glow-red: 0 0 20px rgba(239, 68, 68, 0.08);
 
-  /* ── Font ── */
-  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
-  --font-body: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+  /* ── Font — provided at runtime by next/font (see layout.jsx) ── */
+  --font-display: var(--font-space-grotesk, system-ui, sans-serif);
+  --font-body: var(--font-inter, system-ui, -apple-system, sans-serif);
+  --font-mono: var(--font-jetbrains, ui-monospace, monospace);
 }
 
 /* ===================================
